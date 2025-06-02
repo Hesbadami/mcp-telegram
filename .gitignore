@@ -1,4 +1,5 @@
 myenv
-.env
+src/.env
 src/*.session
 **/__pycache__/
+mcp_stdio_gateway

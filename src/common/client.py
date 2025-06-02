@@ -1,4 +1,5 @@
 import sys
+import logging
 import os
 from typing import Optional, Type, Union
 
@@ -8,6 +9,21 @@ import telethon
 from telethon import TelegramClient
 import qrcode
 from io import StringIO
+
+# Configure Telethon logging to go to stderr only
+telethon_logger = logging.getLogger('telethon')
+telethon_logger.setLevel(logging.WARNING)  # Reduce verbosity, only show warnings and errors
+
+# Create a handler that outputs to stderr
+stderr_handler = logging.StreamHandler(sys.stderr)
+stderr_handler.setFormatter(logging.Formatter(
+    '[%(asctime)s] %(levelname)s - %(name)s - %(message)s'
+))
+
+# Remove any existing handlers and add our stderr handler
+telethon_logger.handlers.clear()
+telethon_logger.addHandler(stderr_handler)
+telethon_logger.propagate = False  # Don't propagate to root logger
 
 def display_url_as_qr(url):
     # Create QR code
@@ -26,10 +42,10 @@ def display_url_as_qr(url):
     f.seek(0)
     qr_string = f.read()
     
-    # Display the QR code in terminal
-    print("\nScan this QR code to login to Telegram:")
-    print(qr_string)
-    print(f"Or use this URL: {url}")
+    # Display the QR code in terminal (using stderr to avoid MCP issues)
+    print("\nScan this QR code to login to Telegram:", file=sys.stderr)
+    print(qr_string, file=sys.stderr)
+    print(f"Or use this URL: {url}", file=sys.stderr)
 
 class TelegramClientManager:
     _instance: Optional[TelegramClient] = None

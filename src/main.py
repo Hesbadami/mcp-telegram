@@ -1,5 +1,11 @@
 import sys
+import os
 from anyio import run
+from pathlib import Path
+
+# Change to the script's directory
+script_dir = Path(__file__).parent.absolute()
+os.chdir(script_dir)
 
 from common.config import MCP_TRANSPORT
 from common.client import TelegramClientManager
